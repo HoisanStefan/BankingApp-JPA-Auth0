@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Card Info</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<body>
+<div sec:authorize="!isAuthenticated()">
+    <div th:attr="data-url=@{/}"></div>
+    <script>
+        window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+    </script>
+</div>
+<div class="container" style="margin-top: 50px">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="pannel-group">
+                <div class="panel panel-primary">
+                    <div class="panel-heading" style="background-color:lightgray;">
+                        <h1 class="panel-title" th:text="${card.getAccount().getBank().getName()}">Bank name</h1>
+                    </div>
+                </div>
+
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading" style="background-color:lightgray;">
+                    <h1 class="panel-title">Info:</h1>
+                </div>
+                <div>
+                    <h3>
+                        <span th:text="'Holder name:'"></span>
+                        <span th:text="${card.getUsername()}"></span>
+                    </h3>
+                    <h3>
+                        <span th:text="'Card number:'"></span>
+                        <span th:text="${card.getCardNumber()}"></span>
+                    </h3>
+                    <h3>
+                        <span th:text="'CVV code:'"></span>
+                        <span th:text="${card.getCvv()}"></span>
+                    </h3>
+                </div>
+                <div class="col-sm-12 d-flex justify-content-center">
+                    <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

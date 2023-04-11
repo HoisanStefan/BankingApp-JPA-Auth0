@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create account</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:attr="data-url=@{/}"></div>
+        <script>
+            window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+        </script>
+    </div>
+
+    <script th:inline="javascript">
+        function showSection() {
+            document.getElementById('section').style.display = 'block';
+        }
+    </script>
+
+    <div class="container text-center" style="margin-top: 50px">
+        <h1>Create account</h1>
+        <div th:if="${isContractPresent}">
+            <div th:if="${!canAdd}">
+                <h2>You already have a deposit and a current account. You cannot open more accounts at this bank.</h2>
+                <div class="col text-center">
+                    <button type="button" class="btn btn-primary" onclick="history.go(-1)">Go back</button>
+                </div>
+            </div>
+            <div th:if="${canAdd}">
+                <div th:if="${existingAccount == 'CURRENT'}">
+                    <h2>You already have a current account opened. You can open one more account at this bank.</h2>
+                    <h2>If you proceed, you will open a new deposit account. Are you sure?</h2>
+                    <div class="row mt-3" style="margin-left: 50px;margin-right: 80px">
+                        <div class="col">
+                            <form th:object="${account}" th:action="@{/accounts/new}" method="post">
+                                <input type="hidden" th:field="*{client.id}"/>
+                                <input type="hidden" th:field="*{bank.id}"/>
+                                <input type="hidden" th:field="*{accountType}"/>
+                                <button type="submit" class="btn btn-success">Yes</button>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-danger" onclick="history.go(-1)">No, go back to previous page</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${existingAccount == 'DEPOSIT'}">
+                    <h2>You already have a deposit account opened. You can open one more account at this bank.</h2>
+                    <h2>If you proceed, you will open a new current account. Are you sure?</h2>
+                    <div class="row mt-3" style="margin-left: 50px;margin-right: 80px">
+                        <div class="col">
+                            <form th:object="${account}" th:action="@{/accounts/new}" method="post">
+                                <input type="hidden" th:field="*{client.id}"/>
+                                <input type="hidden" th:field="*{bank.id}"/>
+                                <input type="hidden" th:field="*{accountType}"/>
+                                <button type="submit" class="btn btn-success">Yes</button>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-danger" onclick="history.go(-1)">No, go back to previous page</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${!isContractPresent}">
+            <h2>You have no contract with this bank. Do you want to create one?</h2>
+            <div class="row mt-3" style="margin-left: 50px;margin-right: 80px">
+                <div class="col">
+                    <button type="button" class="btn btn-success" onclick="showSection()">Yes</button>
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-danger" onclick="history.go(-1)">No, go back to previous page</button>
+                </div>
+            </div>
+            <div id="section" style="display: none;margin-top: 30px;">
+                <h2>Which type of account would you like to open?</h2>
+                <form th:object="${account}" th:action="@{/accounts/new}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{client.id}"/>
+                    <input type="hidden" th:field="*{bank.id}"/>
+                    <select class="col-md-3 form-group" th:field="*{accountType}" required>
+                        <option value="CURRENT">Current account</option>
+                        <option value="DEPOSIT">Deposit account</option>
+                    </select>
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Credits</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:attr="data-url=@{/}"></div>
+        <script>
+            window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+        </script>
+    </div>
+
+    <script th:inline="javascript">
+        function showBanksOffers() {
+            document.getElementById('bankOffers').style.display = 'block';
+            document.getElementById('myCredits').style.display = 'none';
+            document.getElementById('backButton').style.display = 'none';
+        }
+
+        function showMyCredits() {
+            document.getElementById('bankOffers').style.display = 'none';
+            document.getElementById('myCredits').style.display = 'block';
+            document.getElementById('backButton').style.display = 'none';
+        }
+    </script>
+
+    <div class="container">
+        <div class="col-sm-12 d-flex justify-content-center">
+        </div>
+        <div th:replace="fragments/navbar :: navbar(isAdmin=${isAdmin})" style="margin-bottom: 20px"></div>
+        <div th:if="${isAdmin}">
+            <table class="table table-hover table-bordered">
+                <thead class="thead-inverse">
+                <tr th:class="table-dark">
+                    <th>ID</th>
+                    <th>Bank name</th>
+                    <th>Client name</th>
+                    <th>Credit value</th>
+                    <th>Amount paid</th>
+                    <th>Credit state</th>
+                    <th colspan="2"><div class="col text-center">Actions</div></th>
+                </tr>
+                </thead>
+                <tr th:each="credit, stat : ${credits}"
+                    th:class="table-bordered">
+                    <td th:text="${credit.id}">1</td>
+                    <td th:text="${credit.getBank().getName()}">Credit 1</td>
+                    <td th:text="${credit.getUsername()}">Credit 1</td>
+                    <td th:text="${credit.getAmountTotal()} + ' RON'">Credit 1</td>
+                    <td th:text="${credit.getAmountPaid()} + ' RON'">Credit 1</td>
+                    <td th:text="${credit.getCreditState()}">Credit 1</td>
+                    <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/credits/info/' + ${credit.id}}">Info</a></div></td>
+                    <td><div class="col text-center"><a class="btn btn-danger" role="button" th:href="@{'/credits/delete/' + ${credit.id}}">Delete</a></div></td>
+                </tr>
+            </table>
+            <div class="container">
+                <div class="col-md-7 ml-md-auto button-row">
+                    <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+                </div>
+            </div>
+        </div>
+        <div th:if="${!isAdmin}">
+            <div class="container">
+                <div class="container" style="margin-left: -10%; margin-top: 20px">
+                    <div class="col-md-7 ml-md-auto button-row">
+                        <button type="button" class="btn btn-primary" onclick="showBanksOffers()">Banks credit offers</button>
+                        <button type="button" class="btn btn-primary" onclick="showMyCredits()">My credits</button>
+                        <button type="button" id="backButton" class="btn btn-primary" onclick="history.go(-1)">Back</button>
+                    </div>
+                </div>
+
+                <div id="bankOffers" style="display: none;margin-top: 30px;">
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-inverse">
+                        <tr th:class="table-dark">
+                            <th>ID</th>
+                            <th>Bank name</th>
+                            <th>Credit value</th>
+                            <th colspan="2"><div class="col text-center">Actions</div></th>
+                        </tr>
+                        </thead>
+                        <tr th:each="credit, stat : ${creditsBank}"
+                            th:class="table-bordered">
+                            <td th:text="${credit.id}">1</td>
+                            <td th:text="${credit.getBank().getName()}">Credit 1</td>
+                            <td th:text="${credit.getAmountTotal()} + ' RON'">Credit 1</td>
+                            <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/credits/info/' + ${credit.id}}">Info</a></div></td>
+                            <td>
+                                <form th:object="${credit}" th:action="@{/credits/loan}" method="post">
+                                    <input type="hidden" th:field="*{client}"/>
+                                    <input type="hidden" th:field="*{creditState}"/>
+                                    <div th:with="amountTotal=${credit.amountTotal}">
+                                        <input type="hidden" name="amountTotal" th:value="${amountTotal}" />
+                                    </div>
+                                    <div th:with="bankWithoutClients=${credit.bank}">
+                                        <input type="hidden" name="bank" th:value="${bankWithoutClients.id}" />
+                                        <div class="col text-center">
+                                            <button type="submit" class="btn btn-success">
+                                                <span class="glyphicon glyphicon-plus"></span> Choose credit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="container">
+                        <div class="col-md-7 ml-md-auto button-row">
+                            <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="myCredits" style="display: none;margin-top: 30px;">
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-inverse">
+                        <tr th:class="table-dark">
+                            <th>ID</th>
+                            <th>Bank name</th>
+                            <th>Credit value</th>
+                            <th>Amount paid</th>
+                            <th>Credit state</th>
+                            <th colspan="2"><div class="col text-center">Actions</div></th>
+                        </tr>
+                        </thead>
+                        <tr th:each="credit, stat : ${creditsClient}"
+                            th:class="table-bordered">
+                            <td th:text="${credit.id}">1</td>
+                            <td th:text="${credit.getBank().getName()}">Credit 1</td>
+                            <td th:text="${credit.getAmountTotal()} + ' RON'">Credit 1</td>
+                            <td th:text="${credit.getAmountPaid()} + ' RON'">Credit 1</td>
+                            <td th:text="${credit.getCreditState()}">Credit 1</td>
+                            <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/credits/info/' + ${credit.id}}">Info</a></div></td>
+                            <td>
+                                <form th:action="@{/payments/payform}" method="post">
+                                    <input type="hidden" name="credit_id" th:value="${credit.id}">
+                                    <div class="col text-center">
+                                        <button type="submit" class="btn btn-success">
+                                            <span class="glyphicon glyphicon-plus"></span> Pay
+                                        </button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="container">
+                        <div class="col-md-7 ml-md-auto button-row">
+                            <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cards</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:attr="data-url=@{/}"></div>
+        <script>
+            window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+        </script>
+    </div>
+    <div class="container">
+        <div class="col-sm-12 d-flex justify-content-center">
+        </div>
+        <div th:replace="fragments/navbar :: navbar(isAdmin=${isAdmin})" style="margin-bottom: 20px"></div>
+        <table class="table table-hover table-bordered">
+            <thead class="thead-inverse">
+            <tr th:class="table-dark">
+                <th>ID</th>
+                <div th:if="${isAdmin}">
+                    <th>Client name</th>
+                    <th>Bank name</th>
+                    <th>Account type</th>
+                    <th>Card number</th>
+                    <th>CVV code</th>
+                    <th colspan="2"><div class="col text-center">Actions</div></th>
+                </div>
+                <div th:if="${!isAdmin}">
+                    <th>Bank name</th>
+                    <th>Account type</th>
+                    <th>Card number</th>
+                    <th>CVV code</th>
+                    <th colspan="1"><div class="col text-center">Actions</div></th>
+                </div>
+            </tr>
+            </thead>
+            <tr th:each="card, stat : ${cards}"
+                th:class="table-bordered">
+                <td th:text="${card.id}">1</td>
+
+                <div th:if="${isAdmin}">
+                    <td th:text="${card.getUsername()}">Card 1</td>
+                    <td th:text="${card.getAccount().getBank().getName()}">Card 1</td>
+                    <td th:text="${card.getAccount().getAccountType()}">Card 1</td>
+                    <td th:text="${card.getCardNumber()}">Card 1</td>
+                    <td th:text="${card.getCvv()}">Card 1</td>
+                    <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/cards/info/' + ${card.id}}">Info</a></div></td>
+                    <td><div class="col text-center"><a class="btn btn-danger" role="button" th:href="@{'/cards/delete/' + ${card.id}}">Delete</a></div></td>
+                </div>
+                <div th:if="${!isAdmin}">
+                    <td th:text="${card.getAccount().getBank().getName()}">Card 1</td>
+                    <td th:text="${card.getAccount().getAccountType()}">Card 1</td>
+                    <td th:text="${card.getCardNumber()}">Card 1</td>
+                    <td th:text="${card.getCvv()}">Card 1</td>
+                    <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/cards/info/' + ${card.id}}">Info</a></div></td>
+                </div>
+            </tr>
+        </table>
+    </div>
+    <div class="container">
+        <div class="col-md-7 ml-md-auto button-row">
+            <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+        </div>
+    </div>
+</body>
+</html>

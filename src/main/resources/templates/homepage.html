@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+  <meta charset="UTF-8">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css"/>
+  <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div sec:authorize="!isAuthenticated()">
+    <div class="center-wrapper" style="margin-top: 50px;display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         height: 100%;">
+        <h1>Homepage</h1>
+        <a class="btn btn-primary" role="button" th:href="@{/login}">Log In</a>
+    </div>
+</div>
+<div sec:authorize="isAuthenticated()">
+    <div style="margin-top: 50px;display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         height: 100%;">
+        <div th:replace="fragments/navbar :: navbar(isAdmin=${isAdmin})" style="margin-bottom: 20px"></div>
+        <h1>Homepage</h1>
+        <div th:if="${isAdmin}">
+            <h2>Welcome Admin</h2>
+        </div>
+        <div th:if="${!isAdmin}">
+            <h2>You are logged in!</h2>
+        </div>
+        <img th:src="${profile.get('picture')}" th:attr="alt=${profile.get('name')}"/>
+        <h2 th:text="${userData.getLastName()}"></h2>
+        <p th:text="${userData.getEmail()}"></p>
+
+        <div class="row">
+            <label for="phone">Phone:  </label>
+            <p id="phone" th:text="${userData.getPhone()}"></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

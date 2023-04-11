@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Profile Info</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css"/>
+  <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<body>
+
+<div class="container">
+<!--  <div th:include="navbar :: navbar"></div>-->
+  <div th:replace="fragments/navbar :: navbar(isAdmin=${isAdmin})" style="margin-bottom: 20px"></div>
+  <h1>Profile Form</h1>
+<!--    <span th:text="${code}"></span><br>-->
+  <span th:text="${uid}"></span>
+  <form th:object="${userData}" th:action="@{/saveProfile}" method="post">
+    <input type="hidden" th:field="*{id}" th:value="${uid}"/>
+    <div class="form-group">
+      <label for="lastName">Name:</label>
+      <input type="text" class="form-control" id="lastName" required th:field="*{lastName}"/>
+    </div>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" id="email" required th:field="*{email}"/>
+    </div>
+    <div class="form-group">
+      <label for="phone">Phone:</label>
+      <input type="text" class="form-control" id="phone" pattern="^(?:\+40|0)?7[0-9]{8}$" title="Please enter a valid phone number in the format +40XXXXXXXXX" th:field="*{phone}">
+    </div>
+
+    <div class="col-md-7 ml-md-auto button-row">
+      <button type="submit" class="btn btn-primary">Save Profile</button>
+      <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+    </div>
+  </form>
+</div>
+</body>
+</html>

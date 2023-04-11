@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css"/>
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <style>
+        table {
+            width: 100%;
+            table-layout: fixed;
+            border-collapse: collapse;
+        }
+
+        #id1 {
+            width: 150px;
+            text-align: center;
+        }
+
+        #tr1 {
+            height: 50px; /* replace with desired fixed height */
+            text-align: left;
+        }
+
+        tr {
+            height: 50px; /* replace with desired fixed height */
+            text-align: center;
+        }
+    </style>
+<body>
+
+<div class="container">
+    <div class="col-sm-12 d-flex justify-content-center">
+        <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+    </div>
+    <table th:style="'margin-top: 50px;'" class="table table-hover table-bordered">
+        <tr>
+            <td id="id1">Error Message</td>
+            <td th:text="${message}"></td>
+        </tr>
+        <tr>
+            <td id="id1">Status Code</td>
+            <td th:text="${status}"></td>
+        </tr>
+        <tr >
+            <td id="id1">Exception</td>
+            <td th:text="${exception}"></td>
+        </tr>
+        <tr id="tr1">
+            <td id="id1">Stacktrace</td>
+            <td>
+                <pre th:text="${trace}"></pre>
+            </td>
+        </tr>
+        <tr>
+            <td id="id1">Binding Errors</td>
+            <td th:text="${errors}"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

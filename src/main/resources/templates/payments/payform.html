@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New payment</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div sec:authorize="!isAuthenticated()">
+    <div th:attr="data-url=@{/}"></div>
+    <script>
+        window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+    </script>
+</div>
+
+<div class="container" style="margin-top: 50px">
+    <div class="text-center">
+        <h1>Make a new payment</h1>
+    </div>
+    <div class="row mt-3" style="margin-left: 50px;margin-right: 80px">
+        <div class="col">
+            <form th:object="${payment}" th:action="@{/payments/new}" method="post">
+                <input type="hidden" th:field="*{bankName}"/>
+                <input type="hidden" th:field="*{username}"/>
+                <input type="hidden" th:field="*{creditId}"/>
+                <div class="text-center">
+                    <h2>Select the account:</h2>
+                    <select class="col-md-3 form-group" th:field="*{accountNumber}" required>
+                        <option th:each="account : ${accounts}" th:value="${account.id}" th:text="${account}"></option>
+                    </select>
+                </div>
+                <div class="text-center">
+                    <h2>Enter the amount you want to pay:</h2>
+                    <input type="number" step="0.01" id="float-input" name="floatInput" th:field="*{paidValue}" required />
+                    RON
+                </div>
+                <div class="col-md-7 ml-md-auto button-row" style="margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

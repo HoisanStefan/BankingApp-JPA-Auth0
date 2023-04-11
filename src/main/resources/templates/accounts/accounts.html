@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Accounts</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:attr="data-url=@{/}"></div>
+        <script>
+            window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+        </script>
+    </div>
+    <div class="container">
+        <div class="col-sm-12 d-flex justify-content-center">
+        </div>
+        <div th:replace="fragments/navbar :: navbar(isAdmin=${isAdmin})" style="margin-bottom: 20px"></div>
+        <table class="table table-hover table-bordered">
+            <thead class="thead-inverse">
+            <tr th:class="table-dark">
+                <th>ID</th>
+                <div th:if="${isAdmin}">
+                    <th>Client name</th>
+                    <th>Bank name</th>
+                    <th>Account type</th>
+                    <th>Balance</th>
+                    <th>IBAN</th>
+                    <th colspan="2"><div class="col text-center">Actions</div></th>
+                </div>
+                <div th:if="${!isAdmin}">
+                    <th>Bank name</th>
+                    <th>Account type</th>
+                    <th>Balance</th>
+                    <th>IBAN</th>
+                    <th colspan="2"><div class="col text-center">Actions</div></th>
+                </div>
+            </tr>
+            </thead>
+            <tr th:each="account, stat : ${accounts}"
+                th:class="table-bordered">
+                <td th:text="${account.id}">1</td>
+
+                <div th:if="${isAdmin}">
+                    <td th:text="${account.getUsername()}">Account 1</td>
+                    <td th:text="${account.getBank().getName()}">Account 1</td>
+                    <td th:text="${account.getAccountType()}">Account 1</td>
+                    <td th:text="${account.getAccountValue()} + ' RON'">Account 1</td>
+                    <td th:text="${account.getAccountNumber()}">Account 1</td>
+                    <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/accounts/info/' + ${account.id}}">Info</a></div></td>
+                    <td><div class="col text-center"><a class="btn btn-danger" role="button" th:href="@{'/accounts/delete/' + ${account.id}}">Delete</a></div></td>
+                </div>
+                <div th:if="${!isAdmin}">
+                    <td th:text="${account.getBank().getName()}">Account 1</td>
+                    <td th:text="${account.getAccountType()}">Account 1</td>
+                    <td th:text="${account.getAccountValue()} + ' RON'">Account 1</td>
+                    <td th:text="${account.getAccountNumber()}">Account 1</td>
+                    <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/accounts/info/' + ${account.id}}">Info</a></div></td>
+                    <td>
+                        <form th:action="@{/deposits/depositform}" method="post">
+                            <input type="hidden" name="account_id" th:value="${account.id}">
+                            <div class="col text-center">
+                                <button type="submit" class="btn btn-success">
+                                    <span class="glyphicon glyphicon-plus"></span> Make deposit
+                                </button>
+                            </div>
+                        </form>
+                    </td>
+                </div>
+            </tr>
+        </table>
+    </div>
+    <div class="container">
+        <div class="col-md-7 ml-md-auto button-row">
+            <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+        </div>
+    </div>
+</body>
+</html>

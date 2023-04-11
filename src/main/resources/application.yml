@@ -1,0 +1,19 @@
+# src/main/resources/application.yml
+spring:
+  session:
+    timeout: 30m
+  security:
+    oauth2:
+      client:
+        registration:
+          auth0:
+            client-id: PwGphREphl1od9qx4wbQJhcAIVBBiq4L
+            client-secret: qiGAX5oW3mxxkRbnATOQbJZ01l7BoeEw3AiXHm0XGd3rWW0Iqe2WDexE2FcuwtDY
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          auth0:
+            # trailing slash is important!
+            issuer-uri: https://dev-0ax460bs.eu.auth0.com/

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create credit offer</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:attr="data-url=@{/}"></div>
+        <script>
+            window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+        </script>
+    </div>
+
+    <div class="container" style="margin-top: 50px">
+        <div class="text-center">
+            <h1>Create credit bank offer</h1>
+            <h2>Enter the credit total value:</h2>
+        </div>
+        <div class="row mt-3" style="margin-left: 50px;margin-right: 80px">
+            <div class="col">
+                <form th:object="${credit}" th:action="@{/credits/new}" method="post">
+                    <input type="hidden" th:field="*{bank.id}"/>
+                    <input type="hidden" th:field="*{creditState}"/>
+                        <div class="text-center">
+                            <input type="number" step="0.01" id="float-input" name="floatInput" th:field="*{amountTotal}" required />
+                            RON
+                        </div>
+                    <div class="col-md-7 ml-md-auto button-row" style="margin-top: 30px;">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

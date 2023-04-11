@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deposits</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css" />
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div sec:authorize="!isAuthenticated()">
+        <div th:attr="data-url=@{/}"></div>
+        <script>
+            window.location.href = document.querySelector('[data-url]').getAttribute('data-url');
+        </script>
+    </div>
+    <div class="container">
+        <div class="col-sm-12 d-flex justify-content-center">
+        </div>
+        <div th:replace="fragments/navbar :: navbar(isAdmin=${isAdmin})" style="margin-bottom: 20px"></div>
+        <div class="btn-group" role="group" aria-label="Deposits" style="margin-bottom: 10px">
+            <a th:href="@{/deposits}" class="btn btn-primary" style="margin-right: 8px">Default</a>
+            <a th:href="@{/deposits(sort_type='value_asc')}" class="btn btn-primary" style="margin-right: 8px"
+               onclick="updateSortType('value_asc')">Sort by value ASC</a>
+            <a th:href="@{/deposits(sort_type='value_desc')}" class="btn btn-primary" style="margin-right: 8px"
+               onclick="updateSortType('value_desc')">Sort by value DESC</a>
+            <a th:href="@{/deposits(sort_type='bank_name_asc')}" class="btn btn-primary" style="margin-right: 8px"
+               onclick="updateSortType('bank_name_asc')">Sort by bank name ASC</a>
+            <a th:href="@{/deposits(sort_type='bank_name_desc')}" class="btn btn-primary"
+               onclick="updateSortType('bank_name_desc')">Sort by bank name DESC</a>
+        </div>
+
+        <script>
+            function updateSortType(newSortType) {
+                // Set the new sort type
+                var sortType = newSortType;
+
+                // Reload the page with the new sort_type parameter
+                window.location.href = window.location.pathname + '?sort_type=' + sortType;
+            }
+        </script>
+        <table class="table table-hover table-bordered">
+            <thead class="thead-inverse">
+            <tr th:class="table-dark">
+                <th>ID</th>
+                <div th:if="${isAdmin}">
+                    <th>Client name</th>
+                    <th>Bank name</th>
+                    <th>IBAN</th>
+                    <th>Deposit value</th>
+                    <th colspan="2"><div class="col text-center">Actions</div></th>
+                </div>
+                <div th:if="${!isAdmin}">
+                    <th>Bank name</th>
+                    <th>IBAN</th>
+                    <th>Deposit value</th>
+                    <th colspan="1"><div class="col text-center">Actions</div></th>
+                </div>
+            </tr>
+            </thead>
+            <tr th:each="deposit : ${deposits.content}"
+                th:class="table-bordered">
+                <td th:text="${deposit.id}">1</td>
+
+                <div th:if="${isAdmin}">
+                    <td th:text="${deposit.getUsername()}">Deposit 1</td>
+                    <td th:text="${deposit.getBankName()}">Deposit 1</td>
+                    <td th:text="${deposit.getAccountNumber()}">Deposit 1</td>
+                    <td th:text="${deposit.getDepositValue()}">Deposit 1</td>
+                    <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/deposits/info/' + ${deposit.id}}">Info</a></div></td>
+                    <td><div class="col text-center"><a class="btn btn-danger" role="button" th:href="@{'/deposits/delete/' + ${deposit.id}}">Delete</a></div></td>
+                </div>
+                <div th:if="${!isAdmin}">
+                    <td th:text="${deposit.getBankName()}">Deposit 1</td>
+                    <td th:text="${deposit.getAccountNumber()}">Deposit 1</td>
+                    <td th:text="${deposit.getDepositValue()}">Deposit 1</td>
+                    <td><div class="col text-center"><a class="btn btn-primary" role="button" th:href="@{'/deposits/info/' + ${deposit.id}}">Info</a></div></td>
+                </div>
+            </tr>
+        </table>
+
+        <!-- Pagination links -->
+        <div th:if="${deposits.totalPages > 1}">
+            <nav>
+                <ul class="pagination">
+                    <li th:classappend="${deposits.first} ? disabled">
+                        <a th:href="@{${#httpServletRequest.requestURI}(page=0, sort_type=${sortType})}">&laquo;</a>
+                    </li>
+                    <li th:classappend="${deposits.first} ? disabled">
+                        <a th:href="@{${#httpServletRequest.requestURI}(page=${deposits.number} - 1, sort_type=${sortType})}">&lsaquo;</a>
+                    </li>
+                    <li th:each="i : ${#numbers.sequence(0, deposits.totalPages - 1)}" th:classappend="${deposits.number == i} ? active">
+                        <a th:href="@{${#httpServletRequest.requestURI}(page=${i}, sort_type=${sortType})}" th:text="${i + 1}"></a>
+                    </li>
+                    <li th:classappend="${deposits.last} ? disabled">
+                        <a th:href="@{${#httpServletRequest.requestURI}(page=${deposits.number} + 1, sort_type=${sortType})}">&rsaquo;</a>
+                    </li>
+                    <li th:classappend="${deposits.last} ? disabled">
+                        <a th:href="@{${#httpServletRequest.requestURI}(page=${deposits.totalPages - 1}, sort_type=${sortType})}">&raquo;</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="container">
+        <div class="col-md-7 ml-md-auto button-row">
+            <button class="btn btn-primary" role="button" onclick="history.go(-1)">Back</button>
+        </div>
+    </div>
+</body>
+</html>
